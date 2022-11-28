@@ -31,7 +31,7 @@ int main(){
     }
     // Pushes back the name of every column to a vector, which is later used to generate the map of info within the data
 
-    for (unsigned int i = 0; i < 2; i++){
+    for (unsigned int i = 0; i < 25; i++){
         readCurrentRecipe(file, firstRecipeColumnVals, allColumnNames);
         // currently this function simply outputs the values into a single map, hence it will only print the most recent value
     }
@@ -63,66 +63,50 @@ void readCurrentRecipe(std::ifstream& currentStream, std::map<std::string, std::
 
 void generateTags(std::map<std::string, std::string>& importantValues, std::vector<std::string> columns, std::string currentString){
 
-    std::stringstream ss(currentString);
-    std::string currentTag = "";
-    std::string currentFragment;
-
-    bool extendedFragment = false;
+    std::string currentFragment = "";
     unsigned int tagToAssign = 0;
-
     unsigned int currentPosition = 0;
 
-    while(!ss.eof()){
-        if(currentString.at(currentPosition) == ',' || currentString.at(currentPosition) == '\"'  || currentString.at(currentPosition) == '\n' ){
-            if(currentString.at(currentPosition) == ',' && currentString.at(currentPosition) == ' '){
-                currentFragment += currentFragment + currentString.at(i);
-            }
-            else if(currentString.at(currentPosition) == ',' && currentString.at(currentPosition) != ' '){
-                importantValues[columns.at(tagToAssign)] = currentFragment;
-                tagToAssign++;
-                currentFragment.clear();
-            }
-            else if(currentString.at(currentPosition) == '\"'){
-                importantValues[columns.at(tagToAssign)] = currentFragment;
-                tagToAssign++;
-                currentFragment.clear();
-            }
-            else if(currentString.at(currentPosition) == ',' && currentString.at(currentPosition) != ' '){
-                importantValues[columns.at(tagToAssign)] = currentFragment;
-                tagToAssign++;
-                currentFragment.clear();
-            }
-
-        }
-        else{
-            currentFragment += currentFragment + currentString.at(i);
-        }
-    }
-
-// FOR THE TIME BEING, USE THIS 
-    while(!ss.eof()){
-        getline(ss, currentFragment, ',');
+    while(currentPosition < (currentString.size() - 2)){
         if(currentFragment.find("\"") != std::string::npos){
-            while(currentFragment.find("\")\"") == std::string::npos){
-                currentTag = currentTag + currentFragment;
-                getline(ss, currentFragment, ',');
-                if(ss.eof()){
-                    currentTag = currentTag + currentFragment;
-                    break;
+            if(currentFragment.size() < 4){
+                currentFragment += currentString.at(currentPosition);
+            }
+            else{
+                currentFragment += currentString.at(currentPosition);
+                std::string temporaryString = currentFragment + currentString.at(currentPosition + 1);
+                if(temporaryString.substr(temporaryString.size()-3, 3) != "\", " && temporaryString.substr(temporaryString.size()-3, 2) == "\","){
+                    importantValues[columns.at(tagToAssign)] = currentFragment;
+                    std::cout << currentFragment << std::endl << std::endl;
+                    tagToAssign++;
+                    currentFragment.clear();
                 }
             }
-            importantValues[columns.at(tagToAssign)] = currentTag;
-            tagToAssign++;
-            currentTag.clear();
         }
         else{
-            importantValues[columns.at(tagToAssign)] = currentFragment;
-            tagToAssign++;
+            if(currentString.at(currentPosition) == ','){
+                importantValues[columns.at(tagToAssign)] = currentFragment;
+                std::cout << currentFragment << std::endl << std::endl;
+                tagToAssign++;
+                currentFragment.clear();
+            }
+            else{
+                currentFragment += currentString.at(currentPosition);
+            }
         }
-        if(tagToAssign >= columns.size()){
-            break;
-        }
+        currentPosition++;
     }
+    if(currentPosition >= currentString.size()-2){
+        currentFragment += currentFragment + currentString.at(currentPosition) + currentString.at(currentPosition + 1);
+        importantValues[columns.at(tagToAssign)] = currentFragment;
+        tagToAssign++;
+        currentFragment.clear();
+    }
+
+    std::cout << "Completed" << std::endl;
+
+// FOR THE TIME BEING, USE THIS 
+    
 }
 
     /*
