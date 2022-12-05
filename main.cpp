@@ -17,7 +17,6 @@ int main(){
     std::map<std::string, std::string> firstRecipeColumnVals;
     std::set<std::string> firstRecipeTags;
 
-    // test
     std::string line;
     std::ifstream file("archive/recipes.csv");
 	std::getline(file, line);
