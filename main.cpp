@@ -6,6 +6,7 @@
 #include <map>
 #include <set>
 #include <iterator>
+#include "HashTable.h"
 
 
 void readCurrentRecipe(std::ifstream& currentStream, std::map<std::string, std::string>& importantValues, std::vector<std::string> columns);
