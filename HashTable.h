@@ -58,7 +58,7 @@ public:
     HashTable();
 
     void InsertMeal(std::string name_, std::string description_, std::string link_, std::string category_, std::vector<std::string> mealTags_, 
-        std::vector<std::string> ingredients_, std::vector<std::string> ingredientAmounts_, std::vector<std::string> steps_);
+    std::vector<std::string> ingredients_, std::vector<std::string> ingredientAmounts_, std::vector<std::string> steps_);
     std::vector<Node*> TagSearch(std::string category, std::vector<std::string> whitelist, std::vector<std::string> blacklist);
     int checkCollision(std::string hashString, int index);
 
