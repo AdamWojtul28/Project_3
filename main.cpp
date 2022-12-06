@@ -20,6 +20,7 @@ struct Recipe
 void readCurrentRecipe(ifstream& currentStream, map<string, string>& importantValues, vector<string> columns);
 void generateTags(map<string, string>& importantValues, vector<string> columns, string currentString);
 void vectorToString(string currentValue, vector<string>& expanded);
+void vectorToString(std::string currentValue, std::vector<std::string>& expanded);
 
 int main(){
     map<string, string> firstRecipeColumnVals;
@@ -112,13 +113,13 @@ void generateTags(map<string, string>& importantValues, vector<string> columns, 
         currentFragment.clear();
     }
 
-    cout << "Completed" << endl;
+    std::cout << "Completed" << std::endl;
     
 }
 
-void vectorToString(string currentValue, vector<string>& expanded){
-    vector<string> substrings;
-    string substring = "";
+void vectorToString(std::string currentValue, std::vector<std::string>& expanded){
+    std::vector<std::string> substrings;
+    std::string substring = "";
     for (unsigned int i = 0; i < currentValue.size() - 1; i++){
         if(currentValue.at(i) == '\"' && currentValue.at(i + 1) == '\"'){
             i += 2;
