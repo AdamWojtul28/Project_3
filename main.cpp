@@ -6,26 +6,35 @@
 #include <map>
 #include <set>
 #include <iterator>
-#include "HashTable.h"
+using namespace std;
+//#include "HashTable.h"
+struct Recipe
+{
+    double rating;
+    string name;
+    string hyperlink;
+    string category;
+    vector<string> keywords;
+};
 
-
-void readCurrentRecipe(std::ifstream& currentStream, std::map<std::string, std::string>& importantValues, std::vector<std::string> columns);
-void generateTags(std::map<std::string, std::string>& importantValues, std::vector<std::string> columns, std::string currentString);
+void readCurrentRecipe(ifstream& currentStream, map<string, string>& importantValues, vector<string> columns);
+void generateTags(map<string, string>& importantValues, vector<string> columns, string currentString);
+void vectorToString(string currentValue, vector<string>& expanded);
 void vectorToString(std::string currentValue, std::vector<std::string>& expanded);
 
-// testing out the committing process
 int main(){
-    std::map<std::string, std::string> firstRecipeColumnVals;
-    std::set<std::string> firstRecipeTags;
+    map<string, string> firstRecipeColumnVals;
+    set<string> firstRecipeTags;
 
-    std::string line;
-    std::ifstream file("archive/recipes.csv");
-	std::getline(file, line);
+    string line;
+    // the recipes.csv file should be a part of the project folder at some point
+    ifstream file("archive/recipes.csv");
+	getline(file, line);
     
-    std::string currentColumnName;
-    std::vector<std::string> allColumnNames;
+    string currentColumnName;
+    vector<string> allColumnNames;
 
-    std::stringstream ss(line);
+    stringstream ss(line);
     while(!ss.eof()){
         getline(ss, currentColumnName, ',');
         allColumnNames.push_back(currentColumnName);
@@ -38,47 +47,47 @@ int main(){
     }
 
     for(auto iterator = firstRecipeColumnVals.begin(); iterator != firstRecipeColumnVals.end(); iterator++){
-        std::cout << iterator->first << " " << iterator->second << std::endl;
+        cout << iterator->first << " " << iterator->second << endl;
     }
 
     return 0;
 }
 
-void readCurrentRecipe(std::ifstream& currentStream, std::map<std::string, std::string>& importantValues, std::vector<std::string> columns){
-    std::string line;
-    std::string fullLine = "";
+void readCurrentRecipe(ifstream& currentStream, map<string, string>& importantValues, vector<string> columns){
+    string line;
+    string fullLine = "";
 
-    std::getline(currentStream, line);
+    getline(currentStream, line);
     fullLine += line;
     while(line.substr(line.size()-2, 2) != ")\""){
-        std::getline(currentStream, line);
+        getline(currentStream, line);
         fullLine += line;
     }
     // Notice that the end of any line must have the characters )\" as its last few characters; therefore, if these aren't the last value, read next line
     
-    std::cout << fullLine << std::endl << std::endl;
+    cout << fullLine << endl << endl;
 
     generateTags(importantValues, columns, fullLine);
 
 }
 
-void generateTags(std::map<std::string, std::string>& importantValues, std::vector<std::string> columns, std::string currentString){
+void generateTags(map<string, string>& importantValues, vector<string> columns, string currentString){
 
-    std::string currentFragment = "";
+    string currentFragment = "";
     unsigned int tagToAssign = 0;
     unsigned int currentPosition = 0;
 
     while(currentPosition < (currentString.size() - 2)){
-        if(currentFragment.find("\"") != std::string::npos){
+        if(currentFragment.find("\"") != string::npos){
             if(currentFragment.size() < 4){
                 currentFragment += currentString.at(currentPosition);
             }
             else{
                 currentFragment += currentString.at(currentPosition);
-                std::string temporaryString = currentFragment + currentString.at(currentPosition + 1);
+                string temporaryString = currentFragment + currentString.at(currentPosition + 1);
                 if(temporaryString.substr(temporaryString.size()-3, 3) != "\", " && temporaryString.substr(temporaryString.size()-3, 2) == "\","){
                     importantValues[columns.at(tagToAssign)] = currentFragment;
-                    std::cout << currentFragment << std::endl << std::endl;
+                    cout << currentFragment << endl << endl;
                     tagToAssign++;
                     currentFragment.clear();
                 }
@@ -87,7 +96,7 @@ void generateTags(std::map<std::string, std::string>& importantValues, std::vect
         else{
             if(currentString.at(currentPosition) == ','){
                 importantValues[columns.at(tagToAssign)] = currentFragment;
-                std::cout << currentFragment << std::endl << std::endl;
+                cout << currentFragment << endl << endl;
                 tagToAssign++;
                 currentFragment.clear();
             }
