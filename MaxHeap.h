@@ -59,6 +59,7 @@ class MaxHeap
  public: 
   void BuildMaps(vector<Recipe>);
   set<Recipe> GetRecipes(bool mustMatchWL, int numRecipes, int minRating, vector<string> blacklist, vector<string> whitelist, string category);
+  vector<string> GetCategories();
 }; 
 
 void MaxHeap::BuildMaps(vector<Recipe> list)
@@ -145,5 +146,15 @@ set<Recipe> MaxHeap::GetRecipes(bool mustMatchWL, int numRecipes, int minRating,
     }
   }
   cout << "could not find n recipes!" << endl;
+  return result;
+}
+
+vector<string> MaxHeap::GetCategories()
+{
+  vector<string> result;
+  for(const auto &pair : this->HeapMap)
+  {
+    result.push_back(pair.first);
+  }
   return result;
 }
