@@ -12,7 +12,7 @@
 void readCurrentRecipe(std::ifstream& currentStream, std::map<std::string, std::string>& importantValues, std::vector<std::string> columns);
 void generateTags(std::map<std::string, std::string>& importantValues, std::vector<std::string> columns, std::string currentString);
 
-
+// testing out the committing process
 int main(){
     std::map<std::string, std::string> firstRecipeColumnVals;
     std::set<std::string> firstRecipeTags;
