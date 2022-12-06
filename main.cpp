@@ -11,6 +11,7 @@
 
 void readCurrentRecipe(std::ifstream& currentStream, std::map<std::string, std::string>& importantValues, std::vector<std::string> columns);
 void generateTags(std::map<std::string, std::string>& importantValues, std::vector<std::string> columns, std::string currentString);
+void vectorToString(std::string currentValue, std::vector<std::string>& expanded);
 
 // testing out the committing process
 int main(){
@@ -97,17 +98,40 @@ void generateTags(std::map<std::string, std::string>& importantValues, std::vect
         currentPosition++;
     }
     if(currentPosition >= currentString.size()-2){
-        currentFragment += currentFragment + currentString.at(currentPosition) + currentString.at(currentPosition + 1);
+        currentFragment += currentString.at(currentPosition) + currentString.at(currentPosition + 1);
         importantValues[columns.at(tagToAssign)] = currentFragment;
         tagToAssign++;
         currentFragment.clear();
     }
 
     std::cout << "Completed" << std::endl;
-
-// FOR THE TIME BEING, USE THIS 
     
 }
+
+void vectorToString(std::string currentValue, std::vector<std::string>& expanded){
+    std::vector<std::string> substrings;
+    std::string substring = "";
+    for (unsigned int i = 0; i < currentValue.size() - 1; i++){
+        if(currentValue.at(i) == '\"' && currentValue.at(i + 1) == '\"'){
+            i += 2;
+            while(!(currentValue.at(i) == '\"' && currentValue.at(i + 1) == '\"')){
+                if(currentValue.at(i) == '\n'){
+                    continue;
+                }
+                substring += currentValue.at(i);
+                i++;
+            }
+            i++;
+            substrings.push_back(substring);
+            substring.clear();
+        }
+        else if(currentValue.at(i) == '\n'){
+            continue;
+        }
+    }
+}
+
+
 
     /*
     0           1   2       3           4       5           6       7               8       9       10              11      12                          13
