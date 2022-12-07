@@ -59,7 +59,8 @@ int main(){
    vector<string> availableCategories = RecipeHeap.GetCategories();
    string userInput = "";
    string userCategory = "";
-   vector<string> keywordList;
+   vector<string> keywordWhiteList;
+   vector<string> keywordBlackList;
   // vector<string> allKeywords = RecipeHash.retrieveAllTags();
 
    cout << "Welcome to the Recipe Generator!\n";
@@ -116,7 +117,7 @@ int main(){
                cin >> userInput2;
                if (stoi(userInput2) == 0)
                {
-                   if (keywordList.empty())
+                   if (keywordWhiteList.empty())
                    {
                        cout << "There are no keywords to remove!\n";
                    }
@@ -130,9 +131,9 @@ int main(){
                            int pos;
                            cout << "Enter keyword to remove\n";
                            cin >> userKeyword;
-                           for (int i = 0; i < keywordList.size(); i++)
+                           for (int i = 0; i < keywordWhiteList.size(); i++)
                            {
-                               if (userKeyword == keywordList.at(i))
+                               if (userKeyword == keywordWhiteList.at(i))
                                {
                                    pos = i;
                                    inList = true;
@@ -141,12 +142,12 @@ int main(){
                            }
                            if (inList)
                            {
-                               keywordList.erase(keywordList.begin() + pos);
+                               keywordWhiteList.erase(keywordWhiteList.begin() + pos);
                                cout << "Success!\n";
                            }
                            else
                            {
-                               cout << "Either this category does not exist or check your spelling and capitalization.\n";
+                               cout << "Either this keyword does not exist or check your spelling and capitalization.\n";
                                userKeyword.clear();
                            }
                        }
@@ -162,9 +163,9 @@ int main(){
                        cin >> userKeyword;
                        bool inList = false;
                        bool alreadyAdded = false;
-                       for (int i = 0; i < keywordList.size(); i++)
+                       for (int i = 0; i < keywordWhiteList.size(); i++)
                        {
-                            if (userKeyword == keywordList.at(i))
+                            if (userKeyword == keywordWhiteList.at(i))
                             {
                                 alreadyAdded = true;
                                 break;
@@ -190,7 +191,7 @@ int main(){
                         if (inList)
                             {
                                 cout << "Success!\n";
-                                keywordList.push_back(userKeyword);
+                                keywordWhiteList.push_back(userKeyword);
                             }
 
                             else
@@ -206,12 +207,133 @@ int main(){
 
            case 3:
            {
-               // similar to case 2, just using blacklist variables
+               string userInput2;
+               cout << "Enter 0 to remove a keyword to blacklist or 1 to add a keyword.\n";
+               cin >> userInput2;
+               if (stoi(userInput2) == 0)
+               {
+                   if (keywordBlackList.empty())
+                   {
+                       cout << "There are no keywords to remove!\n";
+                   }
+
+                   else
+                   {
+                       string userKeyword = "";
+                       while (userKeyword.empty())
+                       {
+                           bool inList = false;
+                           int pos;
+                           cout << "Enter keyword to remove\n";
+                           cin >> userKeyword;
+                           for (int i = 0; i < keywordBlackList.size(); i++)
+                           {
+                               if (userKeyword == keywordBlackList.at(i))
+                               {
+                                   pos = i;
+                                   inList = true;
+                                   break;
+                               }
+                           }
+                           if (inList)
+                           {
+                               keywordBlackList.erase(keywordBlackList.begin() + pos);
+                               cout << "Success!\n";
+                           }
+                           else
+                           {
+                               cout << "Either this keyword does not exist or check your spelling and capitalization.\n";
+                               userKeyword.clear();
+                           }
+                       }
+                   }
+               }
+
+               if (stoi(userInput2) == 1)
+               {
+                   string userKeyword = "";
+                   while (userKeyword.empty())
+                   {
+                       cout << "Enter keyword to add\n";
+                       cin >> userKeyword;
+                       bool inList = false;
+                       bool alreadyAdded = false;
+                       for (int i = 0; i < keywordBlackList.size(); i++)
+                       {
+                            if (userKeyword == keywordBlackList.at(i))
+                            {
+                                alreadyAdded = true;
+                                break;
+                            }
+                       }
+                       if (alreadyAdded)
+                       {
+                            cout << "You already have this tag!\n";
+                            userKeyword.clear();
+                       }
+
+                       if (!alreadyAdded)
+                       {
+                        // for (int i = 0; i < allKeywords.size(); i++)
+                        // {
+                        //     if (userKeyword == allKeywords.at(i))
+                        //     {
+                        //         inList = true;
+                        //         break;
+                        //     }
+                        // }
+
+                        if (inList)
+                            {
+                                cout << "Success!\n";
+                                keywordBlackList.push_back(userKeyword);
+                            }
+
+                            else
+                            {
+                                cout << "Either this keyword does not exist or check your spelling and capitalization.\n";
+                                userKeyword.clear();
+                            }
+                       }
+                   }
+               }
                break;
            }
 
            case 4:
            {
+                string numRecipes;
+                string userMethod;
+                string mustMatchWL;
+                string minRating;
+                vector<Recipe> result;
+                bool WL;
+               cout << "How many recipes would you like returned?\n";
+               cin >> numRecipes;
+
+               cout << "What is the minimum rating?\n";
+               cin >> minRating;
+               cout << "Would you like the recipes to have all whitelisted tags? Enter yes or no.\n";
+               cin >> mustMatchWL;
+               if (mustMatchWL == "yes")
+               {
+                WL = true;
+               }
+               else
+               {
+                WL = false;
+               }
+               cout << "Enter 0 to run search using Heap, 1 for Hash\n";
+               cin >> userMethod;
+               if (stoi(userMethod) == 0)
+               {
+                    result = RecipeHeap.GetRecipes(WL, stoi(numRecipes), stoi(minRating), keywordBlackList, keywordWhiteList, userCategory);
+               }
+
+               for (int i = 0; i < result.size(); i++)
+               {
+                cout << result.at(i).name << endl;
+               }
                // add in datastructure functions
                break;
            }
