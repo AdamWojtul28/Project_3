@@ -21,6 +21,8 @@ struct Recipe
 
 void readCurrentRecipe(std::ifstream& currentStream, std::map<std::string, std::vector<std::string>>& importantValues, std::vector<std::string> columns);
 void stringToVector(std::string currentValue, std::vector<std::string>& expanded);
+Recipe generateRecipe(Recipe& currentRecipe, map<string, vector<string>> firstRecipeColumnVals);
+void assignCurrentValue(std::string valueTitle, map<string, vector<string>> firstRecipeColumnVals, std::string& recipeValue);
 
 int main(){
     map<string, vector<string>> firstRecipeColumnVals;
@@ -44,16 +46,10 @@ int main(){
     // Pushes back the name of every column to a vector, which is later used to generate the map of info within the data
 
     while(!file.eof()){
-        std::cout << "Stuff happening" << std::endl;
         readCurrentRecipe(file, firstRecipeColumnVals, allColumnNames);
-        for(auto iterator = firstRecipeColumnVals.begin(); iterator != firstRecipeColumnVals.end(); iterator++){
-            std::cout << iterator->first << " ";
-            std::cout << iterator->second.size() << " ";
-            for(unsigned int i = 0; i < iterator->second.size(); i++){
-                std::cout << iterator->second.at(i) << " " << std::endl;
-            }
-            std::cout << std::endl;
-        }
+        Recipe newRecipe;
+        generateRecipe(newRecipe, firstRecipeColumnVals);
+        // Insert this recipe into your data structures
         firstRecipeColumnVals.clear();
     }
     // should have a full vector recipeList at this point
