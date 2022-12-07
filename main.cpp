@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <algorithm>
 #include <iterator>
 #include <queue>
 #include <cmath>
@@ -14,7 +15,7 @@ using namespace std;
 
 void readCurrentRecipe(std::ifstream& currentStream, std::map<std::string, std::vector<std::string>>& importantValues, std::vector<std::string> columns);
 void stringToVector(std::string currentValue, std::vector<std::string>& expanded);
-Recipe generateRecipe(Recipe& currentRecipe, map<string, vector<string>> firstRecipeColumnVals);
+void generateRecipe(Recipe& currentRecipe, map<string, vector<string>> firstRecipeColumnVals);
 void assignCurrentValue(std::string valueTitle, map<string, vector<string>> firstRecipeColumnVals, std::string& recipeValue);
 
 int main(){
@@ -38,7 +39,7 @@ int main(){
     }
     // Pushes back the name of every column to a vector, which is later used to generate the map of info within the data
 
-    while(!file.eof()){
+    for(int i = 0; i < 10500; i++){
         readCurrentRecipe(file, firstRecipeColumnVals, allColumnNames);
         Recipe newRecipe;
         generateRecipe(newRecipe, firstRecipeColumnVals);
@@ -57,7 +58,7 @@ int main(){
    
     // other variables
    vector<string> availableCategories = RecipeHeap.GetCategories();
-   string userInput = "";
+   string userInput = "1";
    string userCategory = "";
    vector<string> keywordWhiteList;
    vector<string> keywordBlackList;
@@ -66,12 +67,12 @@ int main(){
    cout << "Welcome to the Recipe Generator!\n";
    while (stoi(userInput) != 0)
    {
-       cout << "Menu:\n";
+       cout << "\nMenu:\n";
        cout << "0. Exit program\n";
        cout << "1. Enter a new food category to search in\n";
        cout << "2. Add or remove keywords from whitelist\n";
        cout << "3. Add or remove keywords from blacklist\n";
-       cout << "4. Run search for x amount of recipes\n\n";
+       cout << "4. Run search for x amount of recipes\n";
        cin >> userInput;
        switch (stoi(userInput))
        {
@@ -471,7 +472,7 @@ void readCurrentRecipe(std::ifstream& currentStream, std::map<std::string, std::
                 //std::cout << currentFragment << std::endl;
             }
             if(!requiresContinuation){
-                std::cout << currentFragment << std::endl;
+                //std::cout << currentFragment << std::endl;
                 stringToVector(currentFragment, importantValues[columns.at(numberFieldsRead)]);
                 currentFragment.clear();
                 numberFieldsRead++;
@@ -491,7 +492,7 @@ void stringToVector(std::string currentValue, std::vector<std::string>& expanded
     else{
         if (currentValue.find("c(\"") != std::string::npos){
             std::string temporaryHolder = currentValue.substr(3, currentValue.size()-4);
-            std::cout << temporaryHolder << std::endl;
+            //std::cout << temporaryHolder << std::endl;
             int sizeValue = temporaryHolder.size();
         
             std::string currentSubstring = "";
@@ -535,18 +536,24 @@ void stringToVector(std::string currentValue, std::vector<std::string>& expanded
     }
 }
 
-Recipe generateRecipe(Recipe& currentRecipe, map<string, vector<string>> firstRecipeColumnVals){
+void generateRecipe(Recipe& currentRecipe, map<string, vector<string>> firstRecipeColumnVals){
     std::string ratingString = "";
 
     assignCurrentValue("Name", firstRecipeColumnVals, currentRecipe.name);
     assignCurrentValue("RecipeCategory", firstRecipeColumnVals, currentRecipe.category);
-    assignCurrentValue("AggregatedRating", firstRecipeColumnVals, currentRecipe.category);
-    currentRecipe.rating = std::stod(ratingString);
-    auto iterator = firstRecipeColumnVals.find("Keys");
+    assignCurrentValue("AggregatedRating", firstRecipeColumnVals, ratingString);
+    if (ratingString == "NA")
+    {
+        currentRecipe.rating = 0;
+    }
+    else
+    {
+        currentRecipe.rating = std::stod(ratingString);
+    }
+    auto iterator = firstRecipeColumnVals.find("Keywords");
     for(unsigned i = 0; i < iterator->second.size(); i++){
         currentRecipe.keywords.push_back(iterator->second.at(i));
     }
-
 }
 
 void assignCurrentValue(std::string valueTitle, map<string, vector<string>> firstRecipeColumnVals, std::string& recipeValue){

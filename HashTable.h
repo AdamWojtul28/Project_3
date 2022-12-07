@@ -5,8 +5,10 @@
 #include <cmath>
 #include <set>
 #include <algorithm>
+#include <set>
 #include <iostream>
-
+#include <iostream>
+using namespace std;
 struct Node
 {
     // for all of the individual recipes
@@ -20,10 +22,11 @@ struct Node
     std::vector<std::string> steps;
 
     Node();
-    Node(std::string name_, std::string description_, std::string category_, std::string rating_, std::vector<std::string> mealTags_, 
-    std::vector<std::string> ingredients_, std::vector<std::string> ingredientAmounts_, std::vector<std::string> steps_) :
-     name(name_), description(description_),rating(stod(rating_)), mealTags(mealTags_), ingredients(ingredients_), ingredientAmounts(ingredientAmounts_), steps(steps_){}
+    Node(std::string name_, std::string description_, std::string category_, std::string rating_, std::vector<std::string> mealTags_);
 
+    // Node(std::string name_, std::string description_, std::string category_, std::string rating_, std::vector<std::string> mealTags_, 
+    // std::vector<std::string> ingredients_, std::vector<std::string> ingredientAmounts_, std::vector<std::string> steps_) :
+    //  name(name_), description(description_), category(category_), rating(stod(rating_)), mealTags(mealTags_), ingredients(ingredients_), ingredientAmounts(ingredientAmounts_), steps(steps_){}
 };
 
 struct NodeVect
@@ -51,7 +54,7 @@ public:
     int HashFunction(std::string hashString);
     void rehash();
 
-    std::set<Node*> TagSearch(std::vector<std::string> taglist, bool and);
+    std::set<Node*> TagSearchInner(std::vector<std::string> taglist, bool and);
 
     void Print();
 
@@ -69,8 +72,7 @@ class HashTable
 public:
     HashTable();
 
-    void InsertMeal(std::string name_, std::string description_, std::string category_, std::string rating_, std::vector<std::string> mealTags_, 
-        std::vector<std::string> ingredients_, std::vector<std::string> ingredientAmounts_, std::vector<std::string> steps_);
+    void InsertMeal(std::string name_, std::string description_, std::string category_, std::string rating_, std::vector<std::string> mealTags_);
     int HashFunction(std::string hashString);
 
     std::set<Node*> TagSearch(std::string category, std::vector<std::string> whitelist, std::vector<std::string> blacklist, bool and);
@@ -79,6 +81,9 @@ public:
 
     std::vector<std::string> retrieveAllTags();
     std::vector<std::string> retrieveCatTags(std::string cat);
+
+    // void InsertMeal(std::string name_, std::string description_, std::string category_, std::string rating_, std::vector<std::string> mealTags_, 
+    //     std::vector<std::string> ingredients_, std::vector<std::string> ingredientAmounts_, std::vector<std::string> steps_);
 
 };
 
@@ -104,6 +109,15 @@ innerHashTable::innerHashTable()
 innerHashTable::~innerHashTable()
 {
     delete[] Meals;
+}
+
+Node::Node(std::string name_, std::string description_, std::string category_, std::string rating_, std::vector<std::string> mealTags_)
+{
+    name = name_;
+    description= description_;
+    category = category_;
+    rating = stod(rating_);
+    mealTags= mealTags_;
 }
 
 //============================================Hash Functions=============================================//
@@ -180,15 +194,14 @@ int innerHashTable::HashFunction(std::string hashString)
 
 // creates meal node then
 // finds and inserts into the right category first then sends it to the next insert function
-void HashTable::InsertMeal(std::string name_, std::string description_, std::string category_, std::string rating_, std::vector<std::string> mealTags_, 
-    std::vector<std::string> ingredients_, std::vector<std::string> ingredientAmounts_, std::vector<std::string> steps_)
+void HashTable::InsertMeal(std::string name_, std::string description_, std::string category_, std::string rating_, std::vector<std::string> mealTags_)
 {
-    Node* meal = &Node(name_, description_, category_, rating_, mealTags_, ingredients_, ingredientAmounts_, steps_);
-    std::string hashString = meal->category;   
+    Node meal = Node(name_, description_, category_, rating_, mealTags_);
+    std::string hashString = meal.category;
 
     int index = HashFunction(hashString);
 
-    CategoryHashTable[index].InsertMeal(meal);
+    CategoryHashTable[index].InsertMeal(&meal);
     
 }
 
@@ -263,13 +276,13 @@ std::set<Node*> HashTable::TagSearch(std::string category, std::vector<std::stri
         for (auto iter = Cats.begin(); iter != Cats.end(); iter++)
             whitelist.push_back(iter->first);
     }
-    
-    returnSet = CategoryHashTable[Cats[category]].TagSearch(whitelist, and);
+    // true was and
+    returnSet = CategoryHashTable[Cats[category]].TagSearchInner(whitelist, true);
 
     // if blacklist is empty we ingnore it
     if (!blacklist.empty())
     {
-        blacklistSet = CategoryHashTable[Cats[category]].TagSearch(blacklist, false);
+        blacklistSet = CategoryHashTable[Cats[category]].TagSearchInner(blacklist, false);
         std::set<Node*> intersect;
         set_intersection(blacklistSet.begin(), blacklistSet.end(), returnSet.begin(), returnSet.end(), intersect.begin());
 
@@ -283,13 +296,13 @@ std::set<Node*> HashTable::TagSearch(std::string category, std::vector<std::stri
     return returnSet;
 }
 
-// searches the category for recipies containing one or all of the tags
-// bool and is for determining if we are going to return any recipe with any of the tags (false) or recipes with only all of the tags (true)
-std::set<Node*> innerHashTable::TagSearch(std::vector<std::string> tagList, bool and)
+//searches the category for recipies containing one or all of the tags
+//bool and is for determining if we are going to return any recipe with any of the tags (false) or recipes with only all of the tags (true)
+std::set<Node*> innerHashTable::TagSearchInner(std::vector<std::string> tagList, bool andTags)
 {
     std::set<Node*> output;
     
-    if (and)
+    if (andTags == true)
     {
         std::set<Node*> compare1;
         std::set<Node*> compare2;
@@ -390,3 +403,13 @@ std::vector<std::string> HashTable::retrieveCatTags(std::string cat)
     return catTags;
 
 }
+
+// HashTable buildHashTable(vector<Node>& recipies)
+// {
+//     HashTable table;
+//     for (int i = 0; i < recipies.size(); i++)
+//     {
+//         table.InsertMeal(recipies[i].name, recipies[i].description, recipies[i].category, recipies[i].rating, recipies[i].mealTags, 
+//             recipies[i].ingredients, recipies[i].ingredientAmounts, recipies[i].steps);
+//     }
+// }
