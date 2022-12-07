@@ -39,7 +39,7 @@ int main(){
     }
     // Pushes back the name of every column to a vector, which is later used to generate the map of info within the data
 
-    for(int i = 0; i < 10500; i++){
+    for(int i = 0; i < 105000; i++){
         readCurrentRecipe(file, firstRecipeColumnVals, allColumnNames);
         Recipe newRecipe;
         generateRecipe(newRecipe, firstRecipeColumnVals);
