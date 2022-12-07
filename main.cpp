@@ -368,47 +368,48 @@ void stringToVector(std::string currentValue, std::vector<std::string>& expanded
     }
     else{
         if (currentValue.find("c(\"") != std::string::npos){
+            std::string temporaryHolder = currentValue.substr(3, currentValue.size()-4);
+            std::cout << temporaryHolder << std::endl;
+            int sizeValue = temporaryHolder.size();
+        
             std::string currentSubstring = "";
             unsigned int i = 0;
             unsigned int startPosition = 0;
             unsigned int endPosition = 0;
-
-            std::string temporarySubstring = "";
-            temporarySubstring = currentValue.substr(i, 2);
-            while(i < currentValue.size()-1){
-                while((temporarySubstring != "\"\"")){
-                    temporarySubstring = currentValue.substr(i, 2);
-                    if(i < currentValue.size()-1){
-                        i++;
+        
+            bool newItem = false;
+            for(unsigned int i = 0; i < sizeValue; i++){
+                if(temporaryHolder.at(i) == '\"' && temporaryHolder.at(i) == '\"' && newItem == false){
+                    newItem = true;
+                    startPosition = i;
+                }
+                if(temporaryHolder.at(i) == '\"' && temporaryHolder.at(i+1) == ',' && newItem == true){
+                    endPosition = i;
+                }
+                if(endPosition > 0){
+                    currentSubstring = temporaryHolder.substr(startPosition + 2, (endPosition - startPosition - 3));
+                    expanded.push_back(currentSubstring);
+                    startPosition = 0; 
+                    endPosition = 0;
+                    newItem = false;
+                }
+                if(i == sizeValue - 2){
+                    endPosition = i;
+                    if(temporaryHolder.at(i) == '\"'){
+                        currentSubstring = temporaryHolder.substr(startPosition + 2, (endPosition - startPosition - 3));
                     }
                     else{
-                        break;
+                        currentSubstring = temporaryHolder.substr(startPosition + 2, (endPosition - startPosition - 4));
                     }
+                    expanded.push_back(currentSubstring);
+                    break;
                 }
-                startPosition = i + 1;
-                i += 2;
-                temporarySubstring = currentValue.substr(i, 2);
-                while(temporarySubstring != "\"\""){
-                    temporarySubstring = currentValue.substr(i, 2);
-                    if(i < currentValue.size()-1){
-                        i++;
-                    }
-                    else{
-                        break;
-                    }
-                }
-                endPosition = i - 1;
-                currentSubstring = currentValue.substr(startPosition, (endPosition - startPosition));
-                i+=1;
-                expanded.push_back(currentSubstring);
-                //std::cout << currentSubstring << std::endl;
             }
         }
         else{
             std::string currentString = currentValue.substr(1, (currentValue.size() - 2));
             expanded.push_back(currentValue);
         }
-        
     }
 }
 
