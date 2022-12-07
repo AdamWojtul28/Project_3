@@ -9,7 +9,7 @@
 #include <iterator>
 #include <queue>
 #include <cmath>
-#include "HashTable.h"
+//#include "HashTable.h"
 #include "MaxHeap.h"
 using namespace std;
 
@@ -39,7 +39,7 @@ int main(){
     }
     // Pushes back the name of every column to a vector, which is later used to generate the map of info within the data
 
-    for(int i = 0; i < 105000; i++){
+    for(int i = 0; i < 10500; i++){
         readCurrentRecipe(file, firstRecipeColumnVals, allColumnNames);
         Recipe newRecipe;
         generateRecipe(newRecipe, firstRecipeColumnVals);
@@ -54,7 +54,7 @@ int main(){
    RecipeHeap.BuildMaps(recipeList);
    
    // create Hash Table
-   HashTable RecipeHash;
+   //HashTable RecipeHash;
    
     // other variables
    vector<string> availableCategories = RecipeHeap.GetCategories();
@@ -67,12 +67,12 @@ int main(){
    cout << "Welcome to the Recipe Generator!\n";
    while (stoi(userInput) != 0)
    {
-       cout << "Menu:\n";
+       cout << "\nMenu:\n";
        cout << "0. Exit program\n";
        cout << "1. Enter a new food category to search in\n";
        cout << "2. Add or remove keywords from whitelist\n";
        cout << "3. Add or remove keywords from blacklist\n";
-       cout << "4. Run search for x amount of recipes\n\n";
+       cout << "4. Run search for x amount of recipes\n";
        cin >> userInput;
        switch (stoi(userInput))
        {

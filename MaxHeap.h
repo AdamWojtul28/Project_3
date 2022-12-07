@@ -130,7 +130,7 @@ vector<Recipe> MaxHeap::GetRecipes(bool mustMatchWL, int numRecipes, int minRati
         validRecipe = false;
       }
       // if it does not have to have all the tags, check it has at least one
-      else if (numOfKeys == 0)
+      else if (numOfKeys == 0 && whitelist.size() != 0)
       {
         validRecipe = false;
       }
