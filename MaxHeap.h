@@ -58,7 +58,7 @@ class MaxHeap
 
  public: 
   void BuildMaps(vector<Recipe>);
-  set<Recipe> GetRecipes(bool mustMatchWL, int numRecipes, int minRating, vector<string> blacklist, vector<string> whitelist, string category);
+  vector<Recipe> GetRecipes(bool mustMatchWL, int numRecipes, int minRating, vector<string> blacklist, vector<string> whitelist, string category);
   vector<string> GetCategories();
 }; 
 
@@ -82,9 +82,10 @@ void MaxHeap::BuildMaps(vector<Recipe> list)
   }
 }
 
-set<Recipe> MaxHeap::GetRecipes(bool mustMatchWL, int numRecipes, int minRating, vector<string> blacklist, vector<string> whitelist, string category)
+
+vector<Recipe> MaxHeap::GetRecipes(bool mustMatchWL, int numRecipes, int minRating, vector<string> blacklist, vector<string> whitelist, string category)
 {
-  set<Recipe> result;
+  vector<Recipe> result;
   // go through the entire list 
   for (int i = 0; i < this->HeapMap[category].size(); i++)
   {
@@ -98,7 +99,7 @@ set<Recipe> MaxHeap::GetRecipes(bool mustMatchWL, int numRecipes, int minRating,
     {
       int numOfKeys = 0;
       // go through keyword vector of recipe
-      for(int j = 0; j < currLoc.keywords.size(); j++)
+      for (int j = 0; j < currLoc.keywords.size(); j++)
       {
         if (!validRecipe)
         {
@@ -136,9 +137,10 @@ set<Recipe> MaxHeap::GetRecipes(bool mustMatchWL, int numRecipes, int minRating,
       // if it is valid, add it to result set
       if (validRecipe)
       {
-        result.insert(currLoc);
+        result.push_back(currLoc);
       }
     }
+
     // if the result is full, return
     if (result.size() == numRecipes)
     {

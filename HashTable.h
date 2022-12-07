@@ -2,8 +2,10 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <cmath>
+#include <set>
 #include <algorithm>
-
+#include <iostream>
 
 struct Node
 {
@@ -18,7 +20,7 @@ struct Node
     std::vector<std::string> steps;
 
     Node();
-    Node(std::string name_, std::string description_, std::string link_, std::string category_, std::string rating_, std::vector<std::string> mealTags_, 
+    Node(std::string name_, std::string description_, std::string category_, std::string rating_, std::vector<std::string> mealTags_, 
     std::vector<std::string> ingredients_, std::vector<std::string> ingredientAmounts_, std::vector<std::string> steps_) :
      name(name_), description(description_),rating(stod(rating_)), mealTags(mealTags_), ingredients(ingredients_), ingredientAmounts(ingredientAmounts_), steps(steps_){}
 
@@ -67,7 +69,7 @@ class HashTable
 public:
     HashTable();
 
-    void InsertMeal(std::string name_, std::string description_, std::string link_, std::string category_, std::string rating_, std::vector<std::string> mealTags_, 
+    void InsertMeal(std::string name_, std::string description_, std::string category_, std::string rating_, std::vector<std::string> mealTags_, 
         std::vector<std::string> ingredients_, std::vector<std::string> ingredientAmounts_, std::vector<std::string> steps_);
     int HashFunction(std::string hashString);
 
@@ -178,10 +180,10 @@ int innerHashTable::HashFunction(std::string hashString)
 
 // creates meal node then
 // finds and inserts into the right category first then sends it to the next insert function
-void HashTable::InsertMeal(std::string name_, std::string description_, std::string link_, std::string category_, std::string rating_, std::vector<std::string> mealTags_, 
+void HashTable::InsertMeal(std::string name_, std::string description_, std::string category_, std::string rating_, std::vector<std::string> mealTags_, 
     std::vector<std::string> ingredients_, std::vector<std::string> ingredientAmounts_, std::vector<std::string> steps_)
 {
-    Node* meal = &Node(name_, description_, link_, category_, rating_, mealTags_, ingredients_, ingredientAmounts_, steps_);
+    Node* meal = &Node(name_, description_, category_, rating_, mealTags_, ingredients_, ingredientAmounts_, steps_);
     std::string hashString = meal->category;   
 
     int index = HashFunction(hashString);
